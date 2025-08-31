@@ -16,8 +16,7 @@ RUN apk update && apk upgrade && \
 # Copia la aplicación
 COPY . .
 
-RUN npm ci --only=production && \
-    npm cache clean --force
+RUN npm install --only=production
 
 # Configuración de seguridad y permisos
 RUN addgroup -g 1001 -S nodejs && \
