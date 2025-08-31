@@ -1,21 +1,23 @@
-# Imagen base liviana + ffmpeg
-FROM node:20-alpine AS base
+# ---------------------------------------
+# 1️⃣ Imagen base más nueva
+FROM node:24-alpine AS base
 
-# Instala ffmpeg
-RUN apk add --no-cache ffmpeg
+# Instala ffmpeg (y otras utilidades de compilación si lo requieres)
+RUN apk add --no-cache ffmpeg python3 make g++
 
 WORKDIR /app
 
-# Copia los archivos de definición de dependencias (incluye el lock)
+# 2️⃣ Copiar los archivos de dependencias
 COPY package*.json ./
 
-# Instala solo las dependencias de producción
-RUN npm install
+# 3️⃣ Instalar solo producción
+# o 'npm install --omit=dev'
+RUN npm ci --only=production   
 
-# Copia el resto del código fuente
+# 4️⃣ Copia el resto del código
 COPY . .
 
-# Variables de entorno
+# Variables de entorno (puedes agruparlas en una sola línea)
 ENV NODE_ENV=production \
     PORT=3000 \
     FASTIFY_ADDRESS=0.0.0.0 \
