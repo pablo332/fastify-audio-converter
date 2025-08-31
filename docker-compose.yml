@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  audio-converter:
+    build: .
+    image: pablo/fastify-audio-converter:latest
+    container_name: audio-converter
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - FASTIFY_ADDRESS=0.0.0.0
+      - FFMPEG_THREADS=2
+    ports:
+      - "8080:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    # tmpfs para buffers rápidos (evita disco); no guardamos archivos
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M

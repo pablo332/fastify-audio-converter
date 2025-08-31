@@ -1,0 +1,20 @@
+{
+  "name": "fastify-audio-converter",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Microservicio Fastify para convertir audio (e.g., .oga a .mp3) usando FFmpeg, listo para Coolify + Docker Compose.",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development node src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/under-pressure": "^9.4.0",
+    "fastify": "^4.28.1",
+    "pump": "^3.0.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^11.2.2"
+  }
+}
