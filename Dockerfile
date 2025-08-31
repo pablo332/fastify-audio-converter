@@ -13,14 +13,11 @@ RUN apk update && apk upgrade && \
     ca-certificates \
     && rm -rf /var/cache/apk/*
 
-# Copia e instala dependencias de Node.js
-#COPY package*.json ./
-#RUN npm ci --only=production && \
-#    npm cache clean --force
-
-
 # Copia la aplicación
 COPY . .
+
+RUN npm ci --only=production && \
+    npm cache clean --force
 
 # Configuración de seguridad y permisos
 RUN addgroup -g 1001 -S nodejs && \
