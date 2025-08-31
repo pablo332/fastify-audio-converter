@@ -14,9 +14,10 @@ RUN apk update && apk upgrade && \
     && rm -rf /var/cache/apk/*
 
 # Copia e instala dependencias de Node.js
-COPY package*.json ./
-RUN npm ci --only=production && \
-    npm cache clean --force
+#COPY package*.json ./
+#RUN npm ci --only=production && \
+#    npm cache clean --force
+
 
 # Copia la aplicación
 COPY . .
