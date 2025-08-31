@@ -6,32 +6,36 @@ WORKDIR /app
 RUN apk update && apk upgrade && \
     apk add --no-cache \
     ffmpeg \
+    python3 \
     make \
     g++ \
     git \
     openssl \
     ca-certificates \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && ln -sf /usr/bin/python3 /usr/bin/python
 
-# check npm and node
+# Verifica versiones
 RUN node -v && npm -v
 
-# Copia la aplicación
+# Copia solo los archivos de dependencias primero
+COPY package*.json ./
+
+# Instala dependencias
+# Más rápido y confiable que npm install
+RUN npm ci --only=production  
+
+# Copia el resto de la aplicación
 COPY . .
 
-RUN npm install
-
-# remove cache
-RUN npm cache clean --force
-
-# Configuración de seguridad y permisos
+# Configura seguridad
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S fastify -u 1001 && \
     chown -R fastify:nodejs /app
 
 USER fastify
 
-# Variables de entorno (puedes agruparlas en una sola línea)
+# Variables de entorno
 EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
