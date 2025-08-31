@@ -6,18 +6,12 @@ WORKDIR /app
 RUN apk update && apk upgrade && \
     apk add --no-cache \
     ffmpeg \
-    python3 \
     make \
     g++ \
     git \
     openssl \
     ca-certificates \
     && rm -rf /var/cache/apk/*
-
-# Configura Python
-RUN ln -sf /usr/bin/python3 /usr/bin/python
-RUN python3 -m ensurepip && \
-    pip3 install --no-cache --upgrade pip setuptools
 
 # Copia e instala dependencias de Node.js
 COPY package*.json ./
