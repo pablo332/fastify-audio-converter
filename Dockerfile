@@ -13,10 +13,16 @@ RUN apk update && apk upgrade && \
     ca-certificates \
     && rm -rf /var/cache/apk/*
 
+# check npm and node
+RUN node -v && npm -v
+
 # Copia la aplicación
 COPY . .
 
-RUN npm install --only=production
+RUN npm install
+
+# remove cache
+RUN npm cache clean --force
 
 # Configuración de seguridad y permisos
 RUN addgroup -g 1001 -S nodejs && \
