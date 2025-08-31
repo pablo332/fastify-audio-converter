@@ -1,28 +1,44 @@
-# ---------------------------------------
-# 1️⃣ Imagen base más nueva
-FROM node:24-alpine AS base
-
-# Instala ffmpeg (y otras utilidades de compilación si lo requieres)
-RUN apk add --no-cache ffmpeg python3 make g++
+FROM node:24-alpine
 
 WORKDIR /app
 
-# 2️⃣ Copiar los archivos de dependencias
-COPY package.json ./
+# Instala dependencias del sistema
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    ffmpeg \
+    python3 \
+    make \
+    g++ \
+    git \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
 
-# 3️⃣ Instalar solo producción
-RUN npm install --omit=dev
-#RUN npm ci --only=production
+# Configura Python
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+RUN python3 -m ensurepip && \
+    pip3 install --no-cache --upgrade pip setuptools
 
-# 4️⃣ Copia el resto del código
+# Copia e instala dependencias de Node.js
+COPY package*.json ./
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copia la aplicación
 COPY . .
 
-# Variables de entorno (puedes agruparlas en una sola línea)
-ENV NODE_ENV=production \
-    PORT=3000 \
-    FASTIFY_ADDRESS=0.0.0.0 \
-    FFMPEG_THREADS=2
+# Configuración de seguridad y permisos
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S fastify -u 1001 && \
+    chown -R fastify:nodejs /app
 
+USER fastify
+
+# Variables de entorno (puedes agruparlas en una sola línea)
 EXPOSE 3000
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV FASTIFY_ADDRESS=0.0.0.0
+ENV FFMPEG_THREADS=2
 
 CMD ["npm", "start"]
