@@ -8,7 +8,7 @@ RUN apk add --no-cache ffmpeg python3 make g++
 WORKDIR /app
 
 # 2️⃣ Copiar los archivos de dependencias
-COPY package*.json ./
+COPY package.json ./
 
 # 3️⃣ Instalar solo producción
 RUN npm install --omit=dev
